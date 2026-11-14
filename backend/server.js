@@ -1,0 +1,12 @@
+const express=require('express');const cors=require('cors');const dotenv=require('dotenv');
+dotenv.config();
+const connectDB=require('./src/config/db');
+const errorHandler=require('./src/middleware/error.middleware');
+const {ensureCategories}=require('./src/utils/seedCategories');
+const app=express();
+app.use(cors({origin:process.env.CLIENT_URL||'http://localhost:5173'}));app.use(express.json({limit:'2mb'}));
+app.get('/api/health',(req,res)=>res.json({success:true,message:'FixIt API is running'}));
+app.use('/api/auth',require('./src/routes/auth.routes'));app.use('/api/users',require('./src/routes/user.routes'));app.use('/api/categories',require('./src/routes/category.routes'));app.use('/api/technicians',require('./src/routes/technician.routes'));app.use('/api/bookings',require('./src/routes/booking.routes'));app.use('/api/admin',require('./src/routes/admin.routes'));
+app.use(errorHandler);
+const PORT=process.env.PORT||5000;
+connectDB().then(async()=>{await ensureCategories();app.listen(PORT,()=>console.log(`FixIt API running on ${PORT}`));}).catch(err=>{console.error(err);process.exit(1)});

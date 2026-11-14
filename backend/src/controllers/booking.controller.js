@@ -1,0 +1,7 @@
+const service=require('../services/booking.service');
+exports.create=async(req,res,next)=>{try{res.status(201).json({success:true,data:await service.create(req.user.id,req.body),message:'Booking created'});}catch(e){next(e)}};
+exports.customerList=async(req,res,next)=>{try{res.json({success:true,data:await service.listForCustomer(req.user.id)});}catch(e){next(e)}};
+exports.technicianList=async(req,res,next)=>{try{res.json({success:true,data:await service.listForTechnician(req.user.id)});}catch(e){next(e)}};
+exports.get=async(req,res,next)=>{try{res.json({success:true,data:await service.getById(req.params.id,req.user)});}catch(e){next(e)}};
+exports.action=(action)=>(async(req,res,next)=>{try{res.json({success:true,data:await service.transition(req.params.id,req.user.id,action),message:`Booking ${action} successful`});}catch(e){next(e)}});
+exports.review=async(req,res,next)=>{try{res.json({success:true,data:await service.review(req.params.id,req.user.id,req.body.rating,req.body.comment),message:'Review submitted'});}catch(e){next(e)}};

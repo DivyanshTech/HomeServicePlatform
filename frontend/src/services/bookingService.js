@@ -1,0 +1,2 @@
+import api from '../api/axios';
+const create=data=>api.post('/bookings',data).then(r=>r.data);const myBookings=()=>api.get('/bookings/my').then(r=>r.data);const technicianJobs=()=>api.get('/bookings/technician').then(r=>r.data);const action=(id,name)=>api.patch(`/bookings/${id}/${name}`).then(r=>r.data);const review=(id,data)=>api.post(`/bookings/${id}/review`,data).then(r=>r.data);export default {create,myBookings,technicianJobs,action,review};

@@ -1,0 +1,2 @@
+import api from '../api/axios';
+const registerTechnician=data=>api.post('/technicians/register',data).then(r=>r.data);const getTechnicians=params=>api.get('/technicians',{params}).then(r=>r.data);const getTechnicianById=id=>api.get(`/technicians/${id}`).then(r=>r.data);const getProfile=()=>api.get('/technicians/profile/me').then(r=>r.data);const updateProfile=data=>api.patch('/technicians/profile/me',data).then(r=>r.data);export default {registerTechnician,getTechnicians,getTechnicianById,getProfile,updateProfile};
