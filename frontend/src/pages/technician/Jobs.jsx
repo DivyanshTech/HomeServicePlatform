@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import bookingService from '../../services/bookingService';
 import { STATUS_LABELS } from '../../utils/constants';
+import ChatModal from '../../components/ChatModal';
+import useChatNotifications from '../../hooks/useChatNotifications';
 
 export default function Jobs() {
   const [jobs, setJobs] = useState([]);
@@ -44,7 +46,12 @@ export default function Jobs() {
 }
 
 function Job({ job, refresh }) {
+  const { summary } = useChatNotifications();
   const [busy, setBusy] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const bookingUnread = summary.bookingUnreadMap[job._id] || 0;
+  const customerPhone = job.customer?.phone || job.customerId?.phone;
+  const canCallCustomer = ['accepted', 'in_progress'].includes(job.status) && customerPhone;
 
   const run = async action => {
     setBusy(true);
@@ -77,11 +84,6 @@ function Job({ job, refresh }) {
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <p className="text-sm">
-          <span className="text-slate-400">Customer Phone</span><br />
-          <b>{job.customerId?.phone || 'Not provided'}</b>
-        </p>
-
-        <p className="text-sm">
           <span className="text-slate-400">City</span><br />
           <b>{job.customerId?.city || 'Not provided'}</b>
         </p>
@@ -95,6 +97,15 @@ function Job({ job, refresh }) {
           <span className="text-slate-400">Service Charge</span><br />
           <b>₹{job.serviceCharge}</b>
         </p>
+
+        {canCallCustomer && (
+          <p className="text-sm">
+            <span className="text-slate-400">Customer phone</span><br />
+            <a href={`tel:${customerPhone}`} className="inline-flex rounded-full bg-blue-50 px-3 py-1 font-bold text-blue-700 hover:bg-blue-100">
+              Call {customerPhone}
+            </a>
+          </p>
+        )}
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2">
@@ -118,13 +129,26 @@ function Job({ job, refresh }) {
           </>
         )}
 
-        {job.status === 'accepted' && (
+        {['accepted', 'on_the_way'].includes(job.status) && (
           <button
             disabled={busy}
             onClick={() => run('start')}
             className="btn-primary"
           >
-            Start job
+            Start Work
+          </button>
+        )}
+
+        {job.chatEnabledAt && ['accepted', 'on_the_way', 'in_progress', 'completed', 'cancelled'].includes(job.status) && (
+          <button
+            type="button"
+            onClick={() => setChatOpen(true)}
+            className="rounded-lg border border-blue-200 px-4 py-2 text-sm font-bold text-blue-700 hover:bg-blue-50"
+          >
+            <span className="inline-flex items-center gap-2">
+              In-App Chat
+              {bookingUnread > 0 && <UnreadBadge count={bookingUnread} />}
+            </span>
           </button>
         )}
 
@@ -134,10 +158,23 @@ function Job({ job, refresh }) {
             onClick={() => run('complete')}
             className="btn-primary"
           >
-            Mark completed
+            Complete Job
           </button>
         )}
       </div>
+      <ChatModal
+        isOpen={chatOpen}
+        onClose={() => setChatOpen(false)}
+        chatType="booking"
+        bookingId={job._id}
+        bookingStatus={job.status}
+        readOnly={!['accepted', 'in_progress'].includes(job.status)}
+        title="Booking Chat"
+      />
     </article>
   );
+}
+
+function UnreadBadge({ count }) {
+  return <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-black leading-none text-white">{count > 99 ? '99+' : count}</span>;
 }

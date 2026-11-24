@@ -137,7 +137,15 @@ function Application({ t, refresh }) {
   return (
     <article className="rounded-2xl border bg-white p-5 shadow-sm">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-        <div>
+        <div className="flex min-w-0 flex-1 gap-4">
+          {t.profileImage ? (
+            <img src={t.profileImage} alt={name} className="h-20 w-20 shrink-0 rounded-full object-cover" />
+          ) : (
+            <div className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-slate-100 text-xl font-black text-slate-400">
+              {name.charAt(0)}
+            </div>
+          )}
+          <div>
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-black">
               {name}
@@ -178,7 +186,7 @@ function Application({ t, refresh }) {
             </p>
           </div>
         </div>
-
+        </div>
         <div className="flex gap-2 lg:min-w-48 lg:flex-col">
           <button
             type="button"

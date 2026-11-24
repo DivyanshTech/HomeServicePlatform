@@ -1,2 +1,2 @@
 const r=require('express').Router();const p=require('../middleware/auth.middleware');const role=require('../middleware/role.middleware');const c=require('../controllers/technician.controller');
-r.post('/register',p,role('customer','technician'),c.register);r.get('/profile/me',p,role('technician'),c.profile);r.patch('/profile/me',p,role('technician'),c.update);r.get('/',p,role('customer'),c.list);r.get('/:id',p,role('customer'),c.get);module.exports=r;
+r.post('/register',p,role('customer','technician'),c.register);r.get('/profile/me',p,role('technician'),c.profile);r.patch('/profile/me',p,role('technician'),c.update);r.get('/earnings',p,role('technician'),c.earnings);r.get('/',p,role('customer'),c.list);r.get('/:id',p,role('customer'),c.get);module.exports=r;

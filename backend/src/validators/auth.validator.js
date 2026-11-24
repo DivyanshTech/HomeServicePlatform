@@ -10,7 +10,8 @@ const base = {
   role: z.enum(['customer', 'technician']).default('customer'),
   category: z.string().optional(),
   experience: z.coerce.number().min(0).max(60).optional(),
-  serviceCharge: z.coerce.number().min(0).max(1000000).optional()
+  serviceCharge: z.coerce.number().min(0).max(1000000).optional(),
+  profileImage: z.string().regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/, 'Profile photo must be a JPEG, PNG or WebP image').max(3000000).optional().or(z.literal(''))
 };
 const registerSchema = z.object(base);
 const loginSchema = z.object({ phone: base.phone, password: base.password });

@@ -21,7 +21,14 @@ async function registerUser(data) {
   if (user.role === 'technician') {
     const category = await Category.findOne({ _id: data.category, isActive: true });
     if (!category) { await User.findByIdAndDelete(user._id); throw new Error('Invalid service category'); }
-    await Technician.create({ userId: user._id, category: category._id, experience: data.experience, serviceCharge: data.serviceCharge, isApproved: false });
+    await Technician.create({
+      userId: user._id,
+      category: category._id,
+      experience: data.experience,
+      serviceCharge: data.serviceCharge,
+      profileImage: data.profileImage || '',
+      isApproved: false
+    });
   }
   return publicUser(user);
 }

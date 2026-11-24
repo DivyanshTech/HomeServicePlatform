@@ -10,18 +10,21 @@ review and approve technician accounts.
 ### Customer
 
 -   Register and sign in securely.
+-   Browse fixed-rate services, packages, inclusions, and spare-part rate cards.
 -   Browse available service technicians by service category and
     location.
 -   View technician profiles and service charges.
--   Create service requests and track booking status.
+-   Request a price quote with an optional coupon and simulated payment.
+-   Create, reschedule, and track bookings; approve mid-job add-ons and submit warranty claims.
 -   Review completed services.
 
 ### Technician
 
 -   Register and create a technician profile.
--   Manage profile and availability.
+-   Manage online status, service pincodes, and weekly availability.
 -   View incoming service requests and assigned jobs.
--   Accept jobs and update their progress.
+-   Accept jobs, report travel status, and verify the customer start PIN.
+-   Submit rate-card add-ons and before/after proof; view earnings and commission summaries.
 -   Mark jobs as completed and view customer reviews.
 
 ### Administrator
@@ -29,6 +32,8 @@ review and approve technician accounts.
 -   Access a role-protected admin area.
 -   Review pending technician registrations.
 -   Approve or reject technician applications.
+-   Manage categories, services, packages, rate cards, coupons, and commission settings.
+-   Filter and manually reassign unstarted bookings.
 
 ## Technology Stack
 
@@ -182,20 +187,30 @@ The backend exposes REST API routes under `/api`:
   `/api/auth`          Registration and authentication
   `/api/users`         User account operations
   `/api/categories`    Service categories
+  `/api/service-items` Fixed-rate services, packages, and spare-part rate cards
   `/api/technicians`   Technician profiles and discovery
-  `/api/bookings`      Service booking lifecycle
-  `/api/admin`         Administrative operations
+  `/api/bookings`      Quotes, mock payments, and booking lifecycle
+  `/api/chat`         Booking chat, customer/technician support, and admin inbox
+  `/api/admin`         Catalog, dispatch, coupons, commission, and administrative operations
   `/api/health`        API health check
 
 Protected endpoints require a valid JWT. Access to role-specific
 operations is controlled by authentication and role middleware.
+
+Booking chat is available to the customer and assigned technician after
+acceptance, permits messages while accepted or in progress, and becomes
+read-only when the booking ends. Customer and technician support threads are
+available from the navigation bar; administrators can reply from the Support
+Inbox. Chat messages containing 10-digit phone numbers are rejected. The chat
+API also provides `GET /api/chat/unread-summary` and
+`PATCH /api/chat/mark-read` for unread counts and read receipts.
 
 ## Booking Lifecycle
 
 A typical booking moves through these statuses:
 
 ``` text
-pending → accepted → in_progress → completed
+pending → accepted → on_the_way → in_progress → completed
 ```
 
 A booking may also be cancelled where the applicable business rules
@@ -213,8 +228,8 @@ permit it.
 ## Current Scope
 
 This repository contains the current FixIt application source code.
-External integrations such as online payments, real-time messaging, and
-email/SMS notifications are not described as implemented features.
+Online payment and coupon outcomes are simulated locally. No paid payment,
+SMS, maps, or real-time messaging providers are integrated.
 
 ## License
 

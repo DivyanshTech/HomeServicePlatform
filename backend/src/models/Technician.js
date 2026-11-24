@@ -7,6 +7,17 @@ const technicianSchema = new mongoose.Schema({
   experience: { type: Number, min: 0, default: 0 },
   serviceCharge: { type: Number, min: 0, required: true, default: 0 },
   availability: { type: Boolean, default: true },
+  isOnline: { type: Boolean, default: true, index: true },
+  servicePincodes: { type: [String], default: [] },
+  weeklyAvailability: {
+    type: [{
+      dayOfWeek: { type: Number, min: 0, max: 6, required: true },
+      isWorking: { type: Boolean, default: true },
+      startTime: { type: String, default: '09:00', match: /^([01]\d|2[0-3]):[0-5]\d$/ },
+      endTime: { type: String, default: '18:00', match: /^([01]\d|2[0-3]):[0-5]\d$/ }
+    }],
+    default: []
+  },
   rating: { type: Number, min: 0, max: 5, default: 0 },
   reviewCount: { type: Number, default: 0 },
   totalJobs: { type: Number, default: 0 },
